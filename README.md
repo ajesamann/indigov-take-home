@@ -61,7 +61,7 @@ ORM: **Prisma**
 
 - Seamlessly integrates with TypeScript, speeding up development and reducing boilerplate.
 
-## Scaling Considerations
+## Scaling considerations
 
 Imagine the app needs to process millions of new constituents daily. Here's a few things I would change or explore for a more optimal solution:
 
