@@ -59,7 +59,7 @@ export const addNewConstituentHandler = async (
 };
 
 // Export constituents to CSV (optionally filtered by before and after dates)
-export const exportCSVHandler = async (
+export const exportToCSVHandler = async (
     req: Request,
     res: Response
 ): Promise<void> => {
