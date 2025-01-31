@@ -24,7 +24,13 @@ npx prisma migrate dev --name init
 PORT=3000
 ```
 
-5. Test to ensure the app is working by running a `curl` to create a new constituent:
+5. Start the app locally:
+
+```
+npm run dev
+```
+
+6. Test to ensure the app is working by running a `curl` to create a new constituent:
 
 ```bash
 curl -X POST http://localhost:<your-port>/api/constituents/add \
@@ -68,6 +74,8 @@ Imagine the app needs to process millions of new constituents daily. Here's a fe
 - Perform data validation on the front-end as well to prevent unnecessary server calls.
 
 - Implement pagination for any endpoints that return large datasets. Returning millions of records at once over the network is extremely inefficient and can cause a multitude of performance issues. The front-end would also struggle to render such a large volume of data, potentially causing the app to crash.
+
+- Add unit tests!
 
 ## Thank you
 

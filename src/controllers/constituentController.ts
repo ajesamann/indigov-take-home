@@ -27,17 +27,19 @@ export const searchConstituentsByName = async (
     try {
         const { name__contains } = req.query;
 
-        if (!name__contains || typeof name__contains !== 'string') {
+        if (!name__contains) {
             throw new APIError(
-                'The name__contains param must be a string.',
+                'The name__contains param must be provided.',
                 400
             );
         }
 
-        const filter = {
+        /*
+            NOTE: The `contains` filter is case-insensitive by default in Prisma when using SQLite.
+        */
+        const filter: Record<string, object> = {
             name: {
                 contains: name__contains,
-                mode: 'insensitive',
             },
         };
 
