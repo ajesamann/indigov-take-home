@@ -48,9 +48,9 @@ curl -X POST http://localhost:<your-port>/api/constituents/add \
 
 ## REST Endpoints
 
-GET `/api/constituents` - GET Return all the constituents that have been created in the database.
-POST `/api/constituents/add` - Create a new constituent.
-GET `/api/constituents/export` - Export all constituents to a CSV file.
+GET `/api/constituents` - GET Return all the constituents that have been created in the database.<br>
+POST `/api/constituents/add` - Create a new constituent.<br>
+GET `/api/constituents/export` - Export all constituents to a CSV file.<br>
 GET `/api/constituents/search?name__contains=<name>` - Returns all constituents whose names contain the provided value.
 
 ## Tech stack
