@@ -35,3 +35,31 @@ curl -X POST http://localhost:<your-port>/api/constituents/add \
     "address": "1234 Elm Street"
   }'
 ```
+
+## Tech stack
+
+Backend framework: **Express.js**
+
+- Lightweight, quick and easy to setup with low overhead -- perfect for this scenario.
+
+Database: **SQLite**
+
+- Provided by default with Prisma and is super optimal for prototyping small-scale projects.
+
+ORM: **Prisma**
+
+- Seamlessly integrates with TypeScript, speeding up development and reducing boilerplate.
+
+## Scaling Considerations
+
+Imagine the app needs to process millions of new constituents daily. Here's what I would change or explore for a more optimal solution:
+
+- This application would be much more write-heavy without too many relations (if any at all), so a relational database might not make sense. It might make more sense to go with a NoSQL database.
+
+- We should implement a rate limiter to prevent abuse of specific endpoints and protect against excessive requests from a single user. You could also introdue a CAPTCHA to prevent bots.
+
+- Perform data validation on the front-end as well to prevent unnecessary server calls.
+
+## Thank you
+
+Thank you for taking the time to look over my submission!
