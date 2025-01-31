@@ -36,6 +36,13 @@ curl -X POST http://localhost:<your-port>/api/constituents/add \
   }'
 ```
 
+## REST Endpoints
+
+GET `/api/constituents` - GET Return all the constituents that have been created in the database.
+POST `/api/constituents/add` - Create a new constituent.
+GET `/api/constituents/export` - Export all constituents to a CSV file.
+GET `/api/constituents/search?name__contains=<name>` - Returns all constituents whose names contain the provided value.
+
 ## Tech stack
 
 Backend framework: **Express.js**
@@ -52,13 +59,15 @@ ORM: **Prisma**
 
 ## Scaling Considerations
 
-Imagine the app needs to process millions of new constituents daily. Here's what I would change or explore for a more optimal solution:
+Imagine the app needs to process millions of new constituents daily. Here's a few things I would change or explore for a more optimal solution:
 
 - This application would be much more write-heavy without too many relations (if any at all), so a relational database might not make sense. It might make more sense to go with a NoSQL database.
 
-- We should implement a rate limiter to prevent abuse of specific endpoints and protect against excessive requests from a single user. You could also introdue a CAPTCHA to prevent bots.
+- Implement a rate limiter to prevent abuse of specific endpoints and protect against excessive requests from a single user. You could also introdue a CAPTCHA to prevent bots.
 
 - Perform data validation on the front-end as well to prevent unnecessary server calls.
+
+- Implement pagination for any endpoints that return large datasets. Returning millions of records at once over the network is extremely inefficient and can cause a multitude of performance issues. The front-end would also struggle to render such a large volume of data, potentially causing the app to crash.
 
 ## Thank you
 
