@@ -19,6 +19,44 @@ export const listConstituents = async (
     }
 };
 
+// List all constituents whose names contain the provided value from the `contains__name` query parameter
+export const searchConstituentsByName = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const { name__contains } = req.query;
+
+        if (!name__contains || typeof name__contains !== 'string') {
+            throw new APIError(
+                'The name__contains param must be a string.',
+                400
+            );
+        }
+
+        const filter = {
+            name: {
+                contains: name__contains,
+                mode: 'insensitive',
+            },
+        };
+
+        const constituents: Constituent[] = await prisma.constituent.findMany({
+            where: filter,
+        });
+
+        res.json({ data: constituents, count: constituents.length });
+    } catch (error) {
+        if (error instanceof APIError) {
+            // Handle expected errors
+            res.status(error.code).json({ error: error.message });
+        } else {
+            // Handle unexpected errors
+            res.status(500).json({ error: 'Internal server error.' });
+        }
+    }
+};
+
 // Add new constituent (merge if exists)
 export const addConstituent = async (
     req: Request,
