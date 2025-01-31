@@ -1,5 +1,7 @@
 ## Run the app locally
 
+Ensure you have the latest versions of Node.js and npm installed on your machine.
+
 1. Pull the repo to your machine:
 
 ```bash
@@ -41,6 +43,8 @@ curl -X POST http://localhost:<your-port>/api/constituents/add \
     "address": "1234 Elm Street"
   }'
 ```
+
+\*If you see any type errors from `@prisma/client` where model types are imported, run `npx prisma generate` and restart your IDE, it should fix the problem!
 
 ## REST Endpoints
 
