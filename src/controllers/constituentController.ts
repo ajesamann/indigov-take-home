@@ -1,66 +1,29 @@
 import { Request, Response } from 'express';
-import { Constituent, PrismaClient } from '@prisma/client';
+import { Constituent } from '@prisma/client';
 import { buildCSV } from '../utils/CSVUtils';
 import { APIError } from '../utils/errorUtils';
 import { isValidEmail } from '../utils/stringUtils';
-
-const prisma = new PrismaClient();
+import {
+    getAllConstituents,
+    searchConstituentsByName,
+    addOrMergeConstituent,
+} from '../services/constituentService';
 
 // List all constituents
-export const listConstituents = async (
+export const getAllConstituentsHandler = async (
     _: Request,
     res: Response
 ): Promise<void> => {
     try {
-        const constituents: Constituent[] = await prisma.constituent.findMany();
+        const constituents: Constituent[] = await getAllConstituents();
         res.json({ data: constituents, count: constituents.length });
     } catch (error) {
         res.status(500).json({ error: 'Internal server error.' });
     }
 };
 
-// List all constituents whose names contain the provided value from the `contains__name` query parameter
-export const searchConstituentsByName = async (
-    req: Request,
-    res: Response
-): Promise<void> => {
-    try {
-        const { name__contains } = req.query;
-
-        if (!name__contains) {
-            throw new APIError(
-                'The name__contains param must be provided.',
-                400
-            );
-        }
-
-        /*
-            NOTE: The `contains` filter is case-insensitive by default in Prisma when using SQLite.
-        */
-        const filter: Record<string, object> = {
-            name: {
-                contains: name__contains,
-            },
-        };
-
-        const constituents: Constituent[] = await prisma.constituent.findMany({
-            where: filter,
-        });
-
-        res.json({ data: constituents, count: constituents.length });
-    } catch (error) {
-        if (error instanceof APIError) {
-            // Handle expected errors
-            res.status(error.code).json({ error: error.message });
-        } else {
-            // Handle unexpected errors
-            res.status(500).json({ error: 'Internal server error.' });
-        }
-    }
-};
-
 // Add new constituent (merge if exists)
-export const addConstituent = async (
+export const addNewConstituentHandler = async (
     req: Request,
     res: Response
 ): Promise<void> => {
@@ -76,12 +39,11 @@ export const addConstituent = async (
         }
 
         const lowercasedEmail: string = email.toLowerCase();
-
-        const constituent: Constituent = await prisma.constituent.upsert({
-            where: { email: lowercasedEmail },
-            update: { name, address },
-            create: { name, email: lowercasedEmail, address },
-        });
+        const constituent: Constituent = await addOrMergeConstituent(
+            name,
+            lowercasedEmail,
+            address
+        );
 
         res.json({ data: constituent, count: 1 });
     } catch (error) {
@@ -96,9 +58,12 @@ export const addConstituent = async (
 };
 
 // Export all constituents to CSV
-export const exportCSV = async (_: Request, res: Response): Promise<void> => {
+export const exportAllCSVHandler = async (
+    _: Request,
+    res: Response
+): Promise<void> => {
     try {
-        const constituents: Constituent[] = await prisma.constituent.findMany();
+        const constituents: Constituent[] = await getAllConstituents();
         const csv: string = buildCSV(constituents);
 
         res.header('Content-Type', 'text/csv');
@@ -106,5 +71,35 @@ export const exportCSV = async (_: Request, res: Response): Promise<void> => {
         res.send(csv);
     } catch (error) {
         res.status(500).json({ error: 'Error exporting CSV.' });
+    }
+};
+
+// List all constituents whose names contain the provided value from the `contains__name` query parameter
+export const searchConstituentsByNameHandler = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const { name__contains } = req.query;
+
+        if (!name__contains || typeof name__contains !== 'string') {
+            throw new APIError(
+                'The name__contains param must be provided as a string.',
+                400
+            );
+        }
+
+        const constituents: Constituent[] =
+            await searchConstituentsByName(name__contains);
+
+        res.json({ data: constituents, count: constituents.length });
+    } catch (error) {
+        if (error instanceof APIError) {
+            // Handle expected errors
+            res.status(error.code).json({ error: error.message });
+        } else {
+            // Handle unexpected errors
+            res.status(500).json({ error: 'Internal server error.' });
+        }
     }
 };

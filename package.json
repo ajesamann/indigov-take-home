@@ -4,9 +4,8 @@
     "description": "The take-home assignment for Indigov.",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon --exec ts-node src/index.ts",
-        "build": "tsc",
-        "start": "node dist/index.js"
+        "setup": "npm install && npx prisma generate && npx prisma migrate dev --name init",
+        "dev": "nodemon --exec ts-node src/index.ts"
     },
     "keywords": [],
     "author": "",

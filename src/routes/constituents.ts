@@ -1,16 +1,16 @@
 import express from 'express';
 import {
-    listConstituents,
-    addConstituent,
-    exportCSV,
-    searchConstituentsByName,
+    addNewConstituentHandler,
+    exportAllCSVHandler,
+    getAllConstituentsHandler,
+    searchConstituentsByNameHandler,
 } from '../controllers/constituentController';
 
 const router = express.Router();
 
-router.get('/', listConstituents);
-router.get('/search', searchConstituentsByName);
-router.post('/add', addConstituent);
-router.get('/export', exportCSV);
+router.get('/', getAllConstituentsHandler);
+router.post('/add', addNewConstituentHandler);
+router.get('/export', exportAllCSVHandler);
+router.get('/search', searchConstituentsByNameHandler);
 
 export default router;

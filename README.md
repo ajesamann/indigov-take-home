@@ -8,31 +8,25 @@ Ensure you have the latest versions of Node.js and npm installed on your machine
 git clone https://github.com/ajesamann/indigov-take-home.git
 ```
 
-2. Install the app dependencies:
+2. Install the app dependencies and setup the SQLite database (this is a script in package.json):
 
 ```bash
-npm install
+npm run setup
 ```
 
-3. Setup your local SQLite database. You may name the initial migration whatever you want. This will generate a `dev.db` file in your `/prisma` folder. This is your local database:
-
-```bash
-npx prisma migrate dev --name init
-```
-
-4. Create a `.env` file in the app directory and add a port variable to whatever port you'd like the app to run on:
+3. Create a `.env` file in the app directory and add a port variable to whatever port you'd like the app to run on:
 
 ```
 PORT=3000
 ```
 
-5. Start the app locally:
+4. Start the app locally:
 
 ```
 npm run dev
 ```
 
-6. Test to ensure the app is working by running a `curl` to create a new constituent:
+5. Test to ensure the app is working by running a `curl` to create a new constituent:
 
 ```bash
 curl -X POST http://localhost:<your-port>/api/constituents/add \
@@ -44,7 +38,7 @@ curl -X POST http://localhost:<your-port>/api/constituents/add \
   }'
 ```
 
-\*If you see any type errors from `@prisma/client` where model types are imported, run `npx prisma generate` and restart your IDE, it should fix the problem!
+\*If you see any type errors from `@prisma/client` where model types are imported -- restart your IDE, it should fix the problem!
 
 ## REST Endpoints
 
@@ -78,6 +72,8 @@ Imagine the app needs to process millions of new constituents daily. Here's a fe
 - Perform data validation on the front-end as well to prevent unnecessary server calls.
 
 - Implement pagination for any endpoints that return large datasets. Returning millions of records at once over the network is extremely inefficient and can cause a multitude of performance issues. The front-end would also struggle to render such a large volume of data, potentially causing the app to crash.
+
+- Implement a logging system to ensure any issues are caught promptly.
 
 - Add unit tests!
 
