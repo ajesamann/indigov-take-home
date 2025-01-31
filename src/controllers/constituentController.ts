@@ -7,6 +7,7 @@ import {
     getAllConstituents,
     searchConstituentsByName,
     addOrMergeConstituent,
+    searchConstituentsByDate,
 } from '../services/constituentService';
 
 // List all constituents
@@ -57,13 +58,27 @@ export const addNewConstituentHandler = async (
     }
 };
 
-// Export all constituents to CSV
-export const exportAllCSVHandler = async (
-    _: Request,
+// Export constituents to CSV (optionally filtered by before and after dates)
+export const exportCSVHandler = async (
+    req: Request,
     res: Response
 ): Promise<void> => {
     try {
-        const constituents: Constituent[] = await getAllConstituents();
+        const { before, after } = req.query;
+
+        const constituents: Constituent[] = await searchConstituentsByDate(
+            before as string,
+            after as string
+        );
+
+        // Sort the constituents by createdAt date (ascending)
+        constituents.sort(
+            (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+        );
+
+        // Build CSV from sorted data
         const csv: string = buildCSV(constituents);
 
         res.header('Content-Type', 'text/csv');
@@ -82,24 +97,12 @@ export const searchConstituentsByNameHandler = async (
     try {
         const { name__contains } = req.query;
 
-        if (!name__contains || typeof name__contains !== 'string') {
-            throw new APIError(
-                'The name__contains param must be provided as a string.',
-                400
-            );
-        }
-
-        const constituents: Constituent[] =
-            await searchConstituentsByName(name__contains);
+        const constituents: Constituent[] = await searchConstituentsByName(
+            name__contains as string
+        );
 
         res.json({ data: constituents, count: constituents.length });
     } catch (error) {
-        if (error instanceof APIError) {
-            // Handle expected errors
-            res.status(error.code).json({ error: error.message });
-        } else {
-            // Handle unexpected errors
-            res.status(500).json({ error: 'Internal server error.' });
-        }
+        res.status(500).json({ error: 'Internal server error.' });
     }
 };

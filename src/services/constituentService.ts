@@ -22,7 +22,7 @@ export const addOrMergeConstituent = async (
 
 // Search for constituents by name
 export const searchConstituentsByName = async (
-    name: string
+    name?: string
 ): Promise<Constituent[]> => {
     /*
         NOTE: The `contains` filter is case-insensitive by default in Prisma when using SQLite.
@@ -32,6 +32,30 @@ export const searchConstituentsByName = async (
             contains: name,
         },
     };
+
+    return await prisma.constituent.findMany({
+        where: filter,
+    });
+};
+
+// Search for constituents by signup date (before and after)
+export const searchConstituentsByDate = async (
+    before?: string,
+    after?: string
+): Promise<Constituent[]> => {
+    // Parse the before and after parameters into Date objects
+    const beforeDate = before ? new Date(before) : null;
+    const afterDate = after ? new Date(after) : null;
+
+    // Build the filter object based on the date parameters
+    const filter: Record<string, object> = {};
+
+    if (beforeDate) {
+        filter.createdAt = { lte: beforeDate };
+    }
+    if (afterDate) {
+        filter.createdAt = { ...filter.createdAt, gte: afterDate };
+    }
 
     return await prisma.constituent.findMany({
         where: filter,
