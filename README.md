@@ -40,7 +40,7 @@ curl -X POST http://localhost:<your-port>/api/constituents/add \
 
 \*If you see any type errors from `@prisma/client` where model types are imported -- restart your IDE, it should fix the problem!
 
-## REST Endpoints
+## REST endpoints
 
 GET `/api/constituents` - Return all the constituents that have been created in the database.<br>
 POST `/api/constituents/add` - Create a new constituent, merging if applicable.<br>
