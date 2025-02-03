@@ -65,7 +65,7 @@ ORM: **Prisma**
 
 Imagine the app needs to process millions of new constituents daily. Here's a few things I would change or explore for a more optimal solution:
 
-- This application would be much more write-heavy without too many relations (if any at all), so a relational database might not make sense. It might make more sense to go with a NoSQL database.
+- At first glance, this application seems write-heavy, so I’d consider a NoSQL database if there aren’t many relational dependencies.
 
 - Implement a rate limiter to prevent abuse of specific endpoints and protect against excessive requests from a single user. You could also introdue a CAPTCHA to prevent bots.
 
